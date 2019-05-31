@@ -65,3 +65,42 @@ const jsonToUrlQuery=function(json){
     }
     return paramsString.slice(0,-1)
 }
+
+// 防抖函数
+// const needDebounceFunc = ()=>{}
+//  const debounceFunc = new Debounce(needDebounceFunc)
+//  debounceFunc.exec();
+class Debounce {
+    constructor(callback,ms){
+        this.timer = null;
+        this.callback = callback;
+        this.ms = ms;
+    }
+    exec(){
+        clearTimeout(this.timer);
+        return this.timer = setTimeout(this.callback,this.ms||100);
+    }
+}
+
+// 节流函数
+//  const needThrottleFunc = ()=>{}
+//  const throttleFunc = new Throttle(needThrottleFunc)
+//  throttleFunc.exec();
+class Throttle {
+    constructor(callback,ms){
+        this.callback = callback;
+        this.ms = ms;
+        this.canRun = true;
+    }
+    exec(){
+        if(!this.canRun){
+            return false;
+        }else{
+            this.canRun = false;
+            this.callback();
+            return setTimeout(()=>{
+                this.canRun=true;
+            },this.ms||100);
+        }
+    }
+}
