@@ -104,3 +104,49 @@ class Throttle {
         }
     }
 }
+
+// 事件处理函数
+// const eventBus = new EventEmitter();
+// eventBus.addListener('start',(data)=>{console.log(data)})
+// eventBus.emit('start',123,456)
+// => 123,456
+class EventEmitter {
+    constructor(){
+        this.listeners = new Map();
+    }
+    addListener(eventName,callback){
+        this.listeners.has(eventName) || this.listeners.set(eventName,callback);
+        this.listeners.get(eventName).push(callback);
+    }
+    removeListener(eventName,callback){
+        if(this.listeners.has(eventName)){
+            let eventCallbackList = this.listeners.get(eventName);
+            if(eventCallbackList&&eventCallbackList.length){
+                let eventCallbackListLength = eventCallbackList.length
+                for(let i =0;i<eventCallbackListLength;i++){
+                    if(typeof eventCallbackList[i]==='function'&&eventCallbackList[i]===callback){
+                        eventCallbackList.splice(i,1);
+                        this.listeners.set(eventName,eventCallbackList);
+                        return true;
+                    }
+                }
+            }else{
+                return false
+            }            
+        }
+        return false;
+    }
+    emit(eventName,...args){
+        if(this.listeners.has(eventName)){
+            const eventList = this.listeners.get(eventName);
+            if(eventList&&eventList.length){
+                eventList.forEach((callbackItem)=>{
+                    callbackItem(...args)
+                })
+                return true
+            }else{
+                return false
+            }
+        }
+    }
+}
