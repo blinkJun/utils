@@ -161,6 +161,7 @@ class LazyLoad {
         this.sourceAttrName = options.source || 'data-src';
         this.lazyloadSelector = options.selector || '.lazy';
         this.ob = null;
+        this.throttle = null;
         this.startLock = false;
     }
     loadImage(img){
