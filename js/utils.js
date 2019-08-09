@@ -223,3 +223,37 @@ class LazyLoad {
         this.throttle.exec();
     }
 } 
+
+// 获取和设置页面滚动高度
+// 获取：const windowScrollTop = pageScrollTop.get()
+// 设置：pageScrollTop.set(200)
+const pageScrollTop = {
+    get(){
+        if (window.pageYOffset) {
+            return window.pageYOffset;
+        } 
+        // Explorer 6 Strict
+        if (document.documentElement && document.documentElement.scrollTop) { 
+            return document.documentElement.scrollTop;
+        } 
+        // all other Explorers
+        if (document.body) {
+            return document.body.scrollTop;
+        }
+        return 0;
+    },
+    set(top){
+        if (window.pageYOffset) {
+            window.pageYOffset = Number(top);
+        }
+        // Explorer 6 Strict
+        if (document.documentElement && document.documentElement.scrollTop) { 
+            document.documentElement.scrollTop = Number(top);
+        }
+        // all other Explorers
+        if (document.body) {
+            document.body.scrollTop = Number(top);
+        }
+        return true;
+    }
+}
