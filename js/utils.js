@@ -293,3 +293,51 @@ const scrollTop = function(el, from = 0, to, duration = 500, endCallback) {
     }
     scroll(from, to, step);
 }
+
+// 将时间戳格式化相对时间
+// 获取：const postTimeFormat = postTime()
+// 设置：postTimeFormat(0)
+const postTime = function(options){
+    let timeText={
+        withinOneMinute:'刚刚',
+        withinOneHour:'{minute}分钟前',
+        withinToday:'{hour}小时前',
+        yesterday:'昨天',
+        history:'{month}月{day}日'
+    }
+    let judgeTimePast=function(timestamp){
+        const now = new Date()
+        const nowTimestamp = now.getTime()
+        const oneMinute = 1000*60;
+        const oneHour = oneMinute*60;
+        const timeMonth = new Date(timestamp).getMonth()+1
+        const timeDate = new Date(timestamp).getDate()
+        const isToday = now.getDate()===timeDate;
+        const isYesterday = new Date(nowTimestamp-1000 * 60 * 60 * 24).getDate()===timeDate;
+        if(isToday){
+            const timePast = nowTimestamp-timestamp
+
+            // 一分钟内
+            const isWithinOneMinute = timePast<oneMinute
+            if(isWithinOneMinute){
+                return timeText.withinOneMinute
+            }
+
+            // 一小时内
+            const isWithinOneHour = timePast<oneHour
+            if(isWithinOneHour){
+                const pastMinute = parseInt(timePast/1000/60)
+                return timeText.withinOneHour.replace('{minute}',pastMinute)
+            }
+
+            // 今天内
+            const pastHour = parseInt(timePast/1000/60/60)
+            return timeText.withinToday.replace('{hour}',pastHour)
+        }
+        if(isYesterday){
+            return timeText.yesterday
+        }
+        return timeText.history.replace('{month}',timeMonth).replace('{day}',timeDate)
+    }
+    return judgeTimePast
+}
