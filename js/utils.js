@@ -1,11 +1,13 @@
 
-let ua = navigator.userAgent;
-const isMobile = /Android|webOS|iPhone|iPod|BlackBerry/i.test(ua)
-const isAndroid  = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1; 
-const isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-const isWx = ua.toLowerCase().match(/MicroMessenger/i) == "micromessenger"
-const isQQ = ua.toLowerCase().match(/QQ/i) == "qq"
-const isWeiBo = ua.toLowerCase().match(/WeiBo/i) == "weibo"
+const ua = function(){
+    let ua = navigator.userAgent;
+    const isMobile = /Android|webOS|iPhone|iPod|BlackBerry/i.test(ua)
+    const isAndroid  = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1; 
+    const isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    const isWx = ua.toLowerCase().match(/MicroMessenger/i) == "micromessenger"
+    const isQQ = ua.toLowerCase().match(/QQ/i) == "qq"
+    const isWeiBo = ua.toLowerCase().match(/WeiBo/i) == "weibo"
+}
 
 
 
@@ -340,4 +342,14 @@ const postTime = function(options){
         return timeText.history.replace('{month}',timeMonth).replace('{day}',timeDate)
     }
     return judgeTimePast
+}
+
+// 将数组拍平
+const flatArray = function(arr){
+    return arr.reduce((base,item)=>{
+        // 如元素是数组则进行递归，逐层拍平
+        let temp = Array.isArray(item)?flat(item):[item];
+        base.push(...temp);
+        return base
+    },[]) //初始数组
 }
