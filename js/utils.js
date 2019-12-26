@@ -353,3 +353,20 @@ const flatArray = function(arr){
         return base
     },[]) //初始数组
 }
+
+// 冒泡排序
+// 原理：
+// 1，首先遍历一次数组；
+// 2，到每一项时，再遍历一次剩余项，与当前项比较，不断取最小值替换到当前项
+// 3，这样保证逐渐遍历的过程中都是取到最小值
+const bubbleSort = function(arr){
+    let length = arr.length;
+    for(let i=0;i<length;i++){
+        for(let j=i+1;j<length;j++){
+            if(arr[j]<arr[i]){
+                [arr[j],arr[i]] = [arr[i],arr[j]]
+            }
+        }
+    }
+    return arr;
+}
