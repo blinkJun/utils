@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>无缝轮播</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        .wrap{
+            width:500px;
+            height:300px;
+            overflow: hidden;
+        }
+        .box{
+            width:9999em;
+            height:300px;
+        }
+        .box li{
+            width:500px;
+            height:300px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap" >
+        <ul class="box" >
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    
+    <script>
+        const wrap = document.querySelector('.wrap');
+        const box = document.querySelector('.box');
+        const list = box.querySelectorAll('li');
+        
+
+        Array.from(box.querySelectorAll('li')).forEach((item)=>{
+            const colors = ['pink','teal','maroon','silver']
+            item.style.background = colors[Math.floor(Math.random()*4)];
+        })
+
+        box.prepend(list[list.length-1].cloneNode())
+        box.append(list[0].cloneNode())
+
+        let changeIndexAni = function(index){
+            box.style.transition = 'transform 0.5s 0s ease';
+            box.style.transform = `translateX(${-index*itemWidth}px)`;
+        }
+        let changeIndexInm = function(index){
+            box.style.transition = '0s';
+            box.style.transform = `translateX(${-index*itemWidth}px)`;
+        }
+
+        const itemWidth = 500;
+        let index = 1;
+        
+        let changeSlide = function(){
+            
+            changeIndexAni(index);
+
+            if(index===box.querySelectorAll('li').length-1){
+                setTimeout(()=>{
+                    index = 1;
+                    changeIndexInm(index);
+                },500)
+            }
+            if(index===0){
+                setTimeout(()=>{
+                    index = box.querySelectorAll('li').length-2;
+                    changeIndexInm(index);
+                },500)
+            }
+        }
+        let prev = function(){
+            index --;
+            changeSlide()
+        }
+        let next = function(){
+            index ++;
+            changeSlide()
+        }
+
+        setInterval(prev, 1000);
+
+    </script>
+</body>
+</html>
