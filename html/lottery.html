@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>lottery</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        .lottery-box{
+            width:300px;
+            height:300px;
+            padding:5px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+            background-color: teal;
+        }
+        .lottery-box>div{
+            width:30%;
+            height:30%;
+            flex:none;
+            display: flex;
+            border-radius: 5px;
+            background-color: silver;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .lottery-box>div.focus{
+            background-color: bisque;
+        }
+    </style>
+</head>
+<body>
+    <div class="lottery-box" >
+        <div class="prize-1 focus" >1</div>
+        <div class="prize-2" >2</div>
+        <div class="prize-3" >3</div>
+        <div class="prize-8" >8</div>
+        <div class="prize-btn" >点击开始</div>
+        <div class="prize-4" >4</div>
+        <div class="prize-7" >7</div>
+        <div class="prize-6" >6</div>
+        <div class="prize-5" >5</div>
+    </div>
+
+    <script>
+        
+        var Lottery = function(params){
+            var box = params.box;
+            var index = params.index||1;
+            var prizeIndex = params.prizeIndex;
+            var presetLoop = params.loop||2;
+            var acceleration = params.acceleration||30;
+            var minSpeed = params.minSpeed||60;
+
+            var isRunning = false
+            return {
+                setParams:function(params){
+                    if(isRunning)return false
+                    box = params.box||box;
+                    index = params.index||index;
+                    prizeIndex = params.prizeIndex||prizeIndex;
+                    presetLoop = params.loop||presetLoop;
+                    acceleration = params.acceleration||acceleration;
+                    minSpeed = params.minSpeed||minSpeed;
+                },
+                start:function(callback){
+                    if(isRunning)return false
+                    isRunning=true
+                    var speedType = 'up';
+                    var speed = minSpeed+acceleration*8;
+                    var loop = presetLoop
+                    var isEnd = false;
+                    var setSpeed = {
+                        up:function(){
+                            return speed-=acceleration
+                        },
+                        uniform:function(){
+                            return speed
+                        },
+                        down:function(){
+                            return speed+=acceleration
+                        }
+                    }
+                    var animation = function(){
+                        setTimeout(()=>{
+                            if(index===8){
+                                index=1
+                            }else{
+                                index++
+                            }
+                            box.querySelector('.focus').classList.remove('focus');
+                            box.querySelector(`.prize-${index}`).classList.add('focus')
+                            // 点击开始后进入加速运动
+                            if(speedType==='up'){
+                                // 未达到最高速度
+                                if(speed>minSpeed){
+                                    setSpeed[speedType]()
+                                }else{
+                                    // 达到最高速度后进入匀速
+                                    speedType='uniform'
+                                }
+                            }
+                            // 进入匀速
+                            else if(speedType==='uniform'){
+                                // 到达触发奖项时进行减速
+                                if(index===prizeIndex){
+                                    loop--
+                                    loop===0?speedType='down':console.log(`剩余${loop}圈`)
+                                }else{
+                                    setSpeed[speedType]()
+                                }
+                            }
+                            // 进入减速
+                            else if(speedType==='down'){
+                                if(index!==prizeIndex){
+                                    setSpeed[speedType]()
+                                }else{
+                                    // 到达触发奖项时停止
+                                    isEnd=true
+                                    isRunning=false
+                                }
+                            }
+                            isEnd?callback():animation()
+                        },speed)
+                    }
+                    animation()
+                }
+            }
+        }
+
+        var lottery = Lottery({
+            box:document.querySelector('.lottery-box'),
+            index:1,
+            prizeIndex:5
+        })
+
+        document.querySelector('.prize-btn').addEventListener('click',function(){
+            lottery.start(()=>{
+                console.log('恭喜！')
+            })
+        })
+    </script>
+</body>
+</html>
