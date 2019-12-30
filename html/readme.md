@@ -31,7 +31,7 @@ demo[https://blinkjun.github.io/utils/html/flop.html]
 ## blur-pic
 毛玻璃效果
 
-demo[https://blinkjun.github.io/utils/html/blur.html]
+demo[https://blinkjun.github.io/utils/html/blur-pic.html]
 
 
 ## opacity-bg
