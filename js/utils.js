@@ -383,7 +383,7 @@ const deepCopy = function (obj) {
     // 是否是数组
     let newObj = Array.isArray(obj) ? [] : {};
     // 不是对象 直接返回
-    if (typeof obj !== 'object') {
+    if (typeof obj !== 'object' && obj!==null) {
         return obj;
     } else {
         //   递归复制
