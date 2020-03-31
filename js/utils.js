@@ -60,12 +60,40 @@ const getUrlQuery = function (variable) {
 };
 
 // json转换为url query参数
-const jsonToUrlQuery = function (json) {
-    let paramsString = '';
-    for (let key in json) {
-        paramsString += `${key}=${encodeURIComponent(json[key])}&`
+const jsonToUrlQuery = function (query) {
+    let queryArr = [];
+    for (const key in query) {
+        if (query.hasOwnProperty(key)) {
+            queryArr.push(`${key}=${query[key]}`)
+        }
     }
-    return paramsString.slice(0, -1)
+    return queryArr.join('&');
+}
+
+// 动态添加url参数
+/*
+    let url = setUrlQuery({
+        url:'www.baidu.com?a=1',
+        query:{
+            b:2
+        }
+    })
+    console.log(url);
+    // www.baidu.com?a=1&b=2
+*/
+
+const setUrlQuery = (options) => {
+    let {url,query} = options;
+    if(!url) return '';
+    if(query) {
+        let params = jsonToUrlQuery(query);
+        if(url.indexOf('?') !== -1) {
+            url =`${url}&${params}`
+        } else {
+            url =`${url}?${params}`
+        }
+    }
+    return url;
 }
 
 // 防抖函数
@@ -377,6 +405,7 @@ const bubbleSort = function (arr) {
 // 基本数据储存在栈中，引用类型数据储存在堆之中
 // 基本类型数据可直接复制，引用类型数据在赋值时，新变量没有获得新值，而是将指针指向此对象的堆位置
 // 浅拷贝：拷贝了对象的引用地址，没有获得新值；深拷贝：获得新值，而不是获得引用地址
+
 // 浅拷贝：let a = b;let a = Object.assign({},b)
 // 深拷贝：let a = JSON.parse(JSON.stringify(b));
 const deepCopy = function (obj) {
