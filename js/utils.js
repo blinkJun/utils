@@ -376,7 +376,7 @@ const postTime = function (options) {
 const flatArray = function (arr) {
     return arr.reduce((base, item) => {
         // 如元素是数组则进行递归，逐层拍平
-        let temp = Array.isArray(item) ? flat(item) : [item];
+        let temp = Array.isArray(item) ? flatArray(item) : [item];
         base.push(...temp);
         return base
     }, []) //初始数组
