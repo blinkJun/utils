@@ -1,16 +1,15 @@
 //双向数据绑定原理实现
 
-// 全局方法
-let activeUpdate;
-
 // 依赖收集与触发
 class Dep {
+    // 一直存在的静态方法
+    static activeUpdate
     constructor(){
         this.subs = new Set();
     }
     depend(){
-        if(activeUpdate){
-            this.subs.add(activeUpdate)
+        if(Dep.activeUpdate){
+            this.subs.add(Dep.activeUpdate)
         }
     }
     notify(){
@@ -41,9 +40,9 @@ const observe = function (obj){
 // 自动触发函数
 const autorun = function (update){
     const wrapperUpdate = function (){
-        activeUpdate = wrapperUpdate;
+        Dep.activeUpdate = wrapperUpdate;
         update();
-        activeUpdate = null;
+        Dep.activeUpdate = null;
     } 
     wrapperUpdate();
 }
@@ -58,7 +57,7 @@ const state = {
 observe(state);
 
 autorun(()=>{
-    console.log(state.count)
+    console.log(`count change:${state.count}`)
 })
 
 state.count++;
