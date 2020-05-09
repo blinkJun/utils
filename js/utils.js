@@ -83,14 +83,14 @@ const jsonToUrlQuery = function (query) {
 */
 
 const setUrlQuery = (options) => {
-    let {url,query} = options;
-    if(!url) return '';
-    if(query) {
+    let { url, query } = options;
+    if (!url) return '';
+    if (query) {
         let params = jsonToUrlQuery(query);
-        if(url.indexOf('?') !== -1) {
-            url =`${url}&${params}`
+        if (url.indexOf('?') !== -1) {
+            url = `${url}&${params}`
         } else {
-            url =`${url}?${params}`
+            url = `${url}?${params}`
         }
     }
     return url;
@@ -336,38 +336,47 @@ const postTime = function (options) {
         history: '{month}月{day}日'
     }
     let judgeTimePast = function (timestamp) {
-        const now = new Date()
-        const nowTimestamp = now.getTime()
+        const nowTimestamp = Date.now();
         const oneMinute = 1000 * 60;
         const oneHour = oneMinute * 60;
-        const timeMonth = new Date(timestamp).getMonth() + 1
-        const timeDate = new Date(timestamp).getDate()
-        const isToday = now.getDate() === timeDate;
-        const isYesterday = new Date(nowTimestamp - 1000 * 60 * 60 * 24).getDate() === timeDate;
+        const oneDay = oneHour * 24
+
+        const timestampDate = new Date(timestamp)
+        const timeYear = timestampDate.getFullYear()
+        const timeMonth = timestampDate.getMonth() + 1
+        const timeDate = timestampDate.getDate()
+        const timeHours = timestampDate.getHours()
+        const timeMinute = timestampDate.getMinutes()
+
+        const timePast = nowTimestamp - timestamp
+        // 一分钟内
+        const isWithinOneMinute = timePast < oneMinute
+        // 一小时内
+        const isWithinOneHour = timePast < oneHour
+        // 一天内
+        const isToday = timePast <= oneDay;
+        // 两天内
+        const isYesterday = timePast <= oneDay * 2;
+        // 三天内
+        const isBeforeYesterday = timePast <= oneDay * 3;
+
+        if (isWithinOneMinute) {
+            return timeText.withinOneMinute
+        }
+        if (isWithinOneHour) {
+            const pastMinute = parseInt(timePast / 1000 / 60)
+            return timeText.withinOneHour.replace('{minute}', pastMinute)
+        }
         if (isToday) {
-            const timePast = nowTimestamp - timestamp
-
-            // 一分钟内
-            const isWithinOneMinute = timePast < oneMinute
-            if (isWithinOneMinute) {
-                return timeText.withinOneMinute
-            }
-
-            // 一小时内
-            const isWithinOneHour = timePast < oneHour
-            if (isWithinOneHour) {
-                const pastMinute = parseInt(timePast / 1000 / 60)
-                return timeText.withinOneHour.replace('{minute}', pastMinute)
-            }
-
-            // 今天内
-            const pastHour = parseInt(timePast / 1000 / 60 / 60)
-            return timeText.withinToday.replace('{hour}', pastHour)
+            return timeText.withinToday.replace('{hour}', timeHours).replace('{minute}', timeMinute)
         }
         if (isYesterday) {
-            return timeText.yesterday
+            return timeText.yesterday.replace('{hour}', timeHours).replace('{minute}', timeMinute)
         }
-        return timeText.history.replace('{month}', timeMonth).replace('{day}', timeDate)
+        if (isBeforeYesterday) {
+            return timeText.dayBeforeYesterday.replace('{hour}', timeHours).replace('{minute}', timeMinute)
+        }
+        return timeText.history.replace('{year}', timeYear).replace('{month}', timeMonth).replace('{day}', timeDate).replace('{hour}', timeHours).replace('{minute}', timeMinute)
     }
     return judgeTimePast
 }
@@ -412,7 +421,7 @@ const deepCopy = function (obj) {
     // 是否是数组
     let newObj = Array.isArray(obj) ? [] : {};
     // 不是对象 直接返回
-    if (typeof obj !== 'object' && obj!==null) {
+    if (typeof obj !== 'object' && obj !== null) {
         return obj;
     } else {
         //   递归复制
