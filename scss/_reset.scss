@@ -258,3 +258,14 @@ input[type="button"] {
     -webkit-appearance: none;
     appearance: none;
 }
+
+::-webkit-scrollbar{
+    width:4px;
+    height:4px;
+}
+::-webkit-scrollbar-thumb{
+    background-color:  #eee;
+}
+::-webkit-scrollbar-track{
+    background-color: rgba(255,255,255,0.8);
+}
