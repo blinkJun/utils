@@ -50,13 +50,15 @@ const dateFormatByStamp = function (timestamp, fmt) {
 const getUrlQuery = function (variable) {
     var query = window.location.search.substring(1);
     var vars = query.split("&");
+    var queryData = {}
     for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split("=");
+        queryData[pair[0]] = pair[1]
         if (pair[0] == variable) {
             return pair[1];
         }
     }
-    return undefined;
+    return queryData;
 };
 
 // json转换为url query参数
