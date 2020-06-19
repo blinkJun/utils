@@ -437,3 +437,23 @@ const deepCopy = function (obj) {
     }
     return newObj; //返回深度克隆后的对象
 }
+
+
+// 在ios上会出现spa设置title不起效的问题，使用ifarme方式兼容
+const setTitle = function(title){
+    document.title= title
+    var mobile = navigator.userAgent.toLowerCase()
+    if (/iphone|ipad|ipod/.test(mobile)) {
+        var iframe = document.createElement('iframe')
+        iframe.style.display = 'none'
+        iframe.setAttribute('src','/favicon.ico' )
+        var iframeCallback = function () {
+            setTimeout(function () {
+                iframe.removeEventListener('load', iframeCallback)
+                document.body.removeChild(iframe)
+            }, 0)
+        }
+        iframe.addEventListener('load', iframeCallback)
+        document.body.appendChild(iframe)
+    }
+}
