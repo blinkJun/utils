@@ -1,90 +1,76 @@
-
-const ua = function () {
-    let ua = navigator.userAgent;
-    const isMobile = /Android|webOS|iPhone|iPod|BlackBerry/i.test(ua)
-    const isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;
-    const isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-    const isWx = ua.toLowerCase().match(/MicroMessenger/i) == "micromessenger"
-    const isQQ = ua.toLowerCase().match(/QQ/i) == "qq"
-    const isWeiBo = ua.toLowerCase().match(/WeiBo/i) == "weibo"
-}
+/*
+ * @Author liangjun
+ * @LastEditors liangjun
+ * @Date 2019-05-29 16:33:50
+ * @LastEditTime 2020-07-17 17:15:14
+ * @Description utils function
+ */ 
 
 
-
-// 时间长度格式化：
-// 根据时间戳转换成为05:30类似的时间格式 
-// durationFormatByStamp(1000) 
-// => 00:01
-const durationFormatByStamp = function (times) {
-    let minu = Math.floor(times / 1000 / 60);
+/**
+ * @method durationFormatByStamp
+ * @description des
+ * @param {Number} times 时间戳
+ * @return {String} '00:01'
+ */
+export const durationFormatByStamp = function (times) {
+    let minu = Math.floor(times / 1000 / 60)
     let second = Math.floor(60 * ((times / 1000 / 60) - Math.floor(times / 1000 / 60)))
-    minu = minu < 10 ? '0' + minu : minu;
+    minu = minu < 10 ? '0' + minu : minu
     second = second < 10 ? '0' + second : second
     return `${minu}:${second}`
 }
 
-// 时间日期格式化：
-// 根据时间戳转换为对应格式的日期，如：2019-06-05 12：11：23
-// dateFormatByStamp(1559110516359,'yyyy-MM-dd hh:mm:ss')
-// => 2019-5-29 14:15:30
-const dateFormatByStamp = function (timestamp, fmt) {
-    let date = new Date(Number(timestamp))
+/**
+ * @method dateFormatByStamp
+ * @description 时间日期格式化
+ * @param {Number} timestamp 时间戳
+ * @param {String} fmt 'yyyy-MM-dd hh:mm:ss'
+ * @return {String} '2019-5-29 14:15:30'
+ */
+export const dateFormatByStamp = function (timestamp, fmt) {
+    const date = new Date(Number(timestamp))
     var o = {
-        "M+": date.getMonth() + 1,                 //月份   
-        "d+": date.getDate(),                    //日   
-        "h+": date.getHours(),                   //小时   
-        "m+": date.getMinutes(),                 //分   
-        "s+": date.getSeconds(),                 //秒   
-        "q+": Math.floor((date.getMonth() + 3) / 3), //季度   
-        "S": date.getMilliseconds()             //毫秒   
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
+        'M+': date.getMonth() + 1, // 月份
+        'd+': date.getDate(), // 日
+        'h+': date.getHours(), // 小时
+        'm+': date.getMinutes(), // 分
+        's+': date.getSeconds(), // 秒
+        'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+        S: date.getMilliseconds() // 毫秒
+    }
+    if (/(y+)/.test(fmt)) { fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length)) }
+    for (var k in o) {
+        if (new RegExp('(' + k + ')').test(fmt)) { fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))) }
+    }
+    return fmt
 }
 
-// 获取url参数
-const getUrlQuery = function (variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split("&");
-    var queryData = {}
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        queryData[pair[0]] = pair[1]
-        if (pair[0] == variable) {
-            return pair[1];
-        }
-    }
-    return queryData;
-};
-
-// json转换为url query参数
+/**
+ * @method jsonToUrlQuery
+ * @description json转换为url query参数
+ * @param {Object} query JSON
+ * @return {String} 'a=1&b=2'
+ */
 const jsonToUrlQuery = function (query) {
-    let queryArr = [];
+    const queryArr = []
     for (const key in query) {
+        // eslint-disable-next-line no-prototype-builtins
         if (query.hasOwnProperty(key)) {
             queryArr.push(`${key}=${query[key]}`)
         }
     }
-    return queryArr.join('&');
+    return queryArr.join('&')
 }
 
-// 动态添加url参数
-/*
-    let url = setUrlQuery({
-        url:'www.baidu.com?a=1',
-        query:{
-            b:2
-        }
-    })
-    console.log(url);
-    // www.baidu.com?a=1&b=2
-*/
-
-const setUrlQuery = (options) => {
+/**
+ * @method updateUrlQuery
+ * @description 动态添加url参数
+ * @requires jsonToUrlQuery
+ * @param {Object} options {url:'www.baidu.com?a=1',query:{b=2}}
+ * @return {String} 'www.baidu.com?a=1&b=2'
+ */
+const updateUrlQuery = (options) => {
     let { url, query } = options;
     if (!url) return '';
     if (query) {
@@ -98,167 +84,59 @@ const setUrlQuery = (options) => {
     return url;
 }
 
-// 防抖函数
-// const needDebounceFunc = ()=>{}
-//  const debounceFunc = new Debounce(needDebounceFunc)
-//  debounceFunc.exec();
+/**
+ * @method Debounce
+ * @description 防抖函数
+ * @param {Function} callback 回调方法
+ * @param {Number} ms 防抖延迟
+ * @return {Object} debounceFunc 防抖类，调用debounceFunc.exec()执行
+ */
 class Debounce {
-    constructor(callback, ms) {
-        this.timer = null;
-        this.callback = callback;
-        this.ms = ms;
+    constructor (callback, ms) {
+        this.timer = null
+        this.callback = callback
+        this.ms = ms
     }
-    exec() {
-        clearTimeout(this.timer);
-        return this.timer = setTimeout(this.callback, this.ms || 100);
+
+    exec () {
+        clearTimeout(this.timer)
+        this.timer = setTimeout(this.callback, this.ms || 100)
+        return this.timer
     }
 }
 
-// 节流函数
-//  const needThrottleFunc = ()=>{}
-//  const throttleFunc = new Throttle(needThrottleFunc)
-//  throttleFunc.exec();
+/**
+ * @method Throttle
+ * @description 节流函数
+ * @param {Function} callback 回调方法
+ * @param {Number} ms 节流间接时间
+ * @return {Object} throttleFunc 节流类，调用throttleFunc.exec()执行
+ */
 class Throttle {
-    constructor(callback, ms) {
-        this.callback = callback;
-        this.ms = ms;
-        this.canRun = true;
+    constructor (callback, ms) {
+        this.callback = callback
+        this.ms = ms
+        this.canRun = true
     }
-    exec() {
+
+    exec () {
         if (!this.canRun) {
-            return false;
+            return false
         } else {
-            this.canRun = false;
-            this.callback();
+            this.canRun = false
+            this.callback()
             return setTimeout(() => {
-                this.canRun = true;
-            }, this.ms || 100);
+                this.canRun = true
+            }, this.ms || 100)
         }
     }
 }
 
-// 事件处理函数
-// const eventBus = new EventEmitter();
-// eventBus.addListener('start',(data)=>{console.log(data)})
-// eventBus.emit('start',123,456)
-// => 123,456
-class EventEmitter {
-    constructor() {
-        this.listeners = new Map();
-    }
-    addListener(eventName, callback) {
-        this.listeners.has(eventName) || this.listeners.set(eventName, callback);
-        this.listeners.get(eventName).push(callback);
-    }
-    removeListener(eventName, callback) {
-        if (this.listeners.has(eventName)) {
-            let eventCallbackList = this.listeners.get(eventName);
-            if (eventCallbackList && eventCallbackList.length) {
-                let eventCallbackListLength = eventCallbackList.length
-                for (let i = 0; i < eventCallbackListLength; i++) {
-                    if (typeof eventCallbackList[i] === 'function' && eventCallbackList[i] === callback) {
-                        eventCallbackList.splice(i, 1);
-                        this.listeners.set(eventName, eventCallbackList);
-                        return true;
-                    }
-                }
-            } else {
-                return false
-            }
-        }
-        return false;
-    }
-    emit(eventName, ...args) {
-        if (this.listeners.has(eventName)) {
-            const eventList = this.listeners.get(eventName);
-            if (eventList && eventList.length) {
-                eventList.forEach((callbackItem) => {
-                    callbackItem(...args)
-                })
-                return true
-            } else {
-                return false
-            }
-        }
-    }
-}
 
-// 图片懒加载 （依赖节流函数 Throttle）
-// <img src="" class="lazy" data-src="http://dev-images.qiniu.kuman.com/diurnal/timgNR1M9P5Y.jpg" alt="">
-// const lazy = new LazyLoad()
-// lazy.start();lazy.end();lazy.refresh();
-// start后，进入窗口类名为.lazy的img元素将data-src的内容载入到src;并删除lazy类名
-class LazyLoad {
-    constructor(options = {}) {
-        this.sourceAttrName = options.source || 'data-src';
-        this.lazyloadSelector = options.selector || '.lazy';
-        this.ob = null;
-        this.throttle = null;
-        this.startLock = false;
-    }
-    loadImage(img) {
-        img.src = img.getAttribute(this.sourceAttrName);
-        img.classList.remove(this.lazyloadSelector.substring(1))
-    }
-    isInSight(img) {
-        const bound = img.getBoundingClientRect();
-        const clientHeight = window.innerHeight;
-        //如果只考虑向下滚动加载
-        //const clientWidth = window.innerWeight;
-        return bound.top <= clientHeight + 100; // +100提前加载
-    }
-    start() {
-        if (this.startLock) {
-            console.log('lazyload already start')
-            return;
-        }
-        this.scrollListen();
-        if ('IntersectionObserver' in window) {
-            let imgs = Array.from(document.querySelectorAll(this.lazyloadSelector));
-            this.ob = new IntersectionObserver((changes) => {
-                for (const change of changes) {
-                    if (0 < change.intersectionRatio && change.intersectionRatio <= 1) {
-                        this.loadImage(change.target);
-                        this.ob.unobserve(change.target);
-                    }
-                }
-            })
-            imgs.forEach((img) => {
-                this.ob.observe(img);
-            })
-        } else {
-            window.addEventListener('scroll', this.scrollListen.bind(this))
-        }
-        this.startLock = true;
-    }
-    end() {
-        this.ob.disconnect();
-        window.removeEventListener('scroll', this.scrollListen);
-        this.startLock = false;
-    }
-    refresh() {
-        this.end();
-        this.start();
-    }
-    normalLazyLoad() {
-        let imgs = Array.from(document.querySelectorAll(this.lazyloadSelector));
-        imgs.forEach((img) => {
-            if (this.isInSight(img)) {
-                this.loadImage(img);
-            }
-        })
-    }
-    scrollListen() {
-        if (!this.throttle) {
-            this.throttle = new Throttle(this.normalLazyLoad.bind(this))
-        }
-        this.throttle.exec();
-    }
-}
-
-// 获取和设置页面滚动高度
-// 获取：const windowScrollTop = pageScrollTop.get()
-// 设置：pageScrollTop.set(200)
+/**
+ * @method pageScrollTop
+ * @description 获取和设置页面滚动高度
+ */
 const pageScrollTop = {
     get() {
         if (window.pageYOffset) {
@@ -290,7 +168,16 @@ const pageScrollTop = {
     }
 }
 
-// 平滑滚动页面
+/**
+ * @method scrollTop
+ * @description 平滑滚动页面
+ * @param {HTMLElement} el 需要滚动的页面元素
+ * @param {Number} from 滚动的开始地点
+ * @param {Number} to 滚动结束的地点
+ * @param {Number} duration 运动时间
+ * @param {Function} endCallback 滚动结束时的回调函数
+ * @return 
+ */
 const scrollTop = function (el, from = 0, to, duration = 500, endCallback) {
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = (
@@ -326,9 +213,12 @@ const scrollTop = function (el, from = 0, to, duration = 500, endCallback) {
     scroll(from, to, step);
 }
 
-// 将时间戳格式化相对时间
-// 获取：const postTimeFormat = postTime()
-// 设置：postTimeFormat(0)
+/**
+ * @method postTime
+ * @description 将时间戳格式化相对时间
+ * @param {Object} options 相对时间模板
+ * @return {String} 相对时间文案
+ */
 const postTime = function (options) {
     let timeText = {
         withinOneMinute: '刚刚',
@@ -337,6 +227,7 @@ const postTime = function (options) {
         yesterday: '昨天',
         history: '{month}月{day}日'
     }
+    Object.assign(timeText,options)
     let judgeTimePast = function (timestamp) {
         const nowTimestamp = Date.now();
         const oneMinute = 1000 * 60;
@@ -383,21 +274,27 @@ const postTime = function (options) {
     return judgeTimePast
 }
 
-// 将数组拍平
+/**
+ * @method flatArray
+ * @description 递归将多维数组拍平为一维数组
+ * @param {Array} arr 多维数据
+ * @return {Array} 一维数组
+ */
 const flatArray = function (arr) {
     return arr.reduce((base, item) => {
         // 如元素是数组则进行递归，逐层拍平
-        let temp = Array.isArray(item) ? flatArray(item) : [item];
-        base.push(...temp);
+        const temp = Array.isArray(item) ? flatArray(item) : [item]
+        base.push(...temp)
         return base
-    }, []) //初始数组
+    }, []) // 初始数组
 }
 
-// 冒泡排序
-// 原理：
-// 1，首先遍历一次数组；
-// 2，到每一项时，再遍历一次剩余项，与当前项比较，不断取最小值替换到当前项
-// 3，这样保证逐渐遍历的过程中都是取到最小值
+/**
+ * @method bubbleSort
+ * @description 冒泡排序
+ * @param {Array} arr 需要排序的数组
+ * @return {Array}
+ */
 const bubbleSort = function (arr) {
     let length = arr.length;
     for (let i = 0; i < length; i++) {
@@ -409,8 +306,11 @@ const bubbleSort = function (arr) {
     }
     return arr;
 }
+// 原理：
+// 1，首先遍历一次数组；
+// 2，到每一项时，再遍历一次剩余项，与当前项比较，不断取最小值替换到当前项
+// 3，这样保证逐渐遍历的过程中都是取到最小值
 
-// 深拷贝
 
 // 浅拷贝与深拷贝：
 // 基本数据储存在栈中，引用类型数据储存在堆之中
@@ -419,6 +319,12 @@ const bubbleSort = function (arr) {
 
 // 浅拷贝：let a = b;let a = Object.assign({},b)
 // 深拷贝：let a = JSON.parse(JSON.stringify(b));
+/**
+ * @method deepCopy
+ * @description 深拷贝
+ * @param {Object} obj 需要拷贝的对象
+ * @return {Object} 返回复制的对象
+ */
 const deepCopy = function (obj) {
     // 是否是数组
     let newObj = Array.isArray(obj) ? [] : {};
@@ -439,7 +345,13 @@ const deepCopy = function (obj) {
 }
 
 
-// 在ios上会出现spa设置title不起效的问题，使用ifarme方式兼容
+
+/**
+ * @method setTitle
+ * @description 在ios上会出现spa设置title不起效的问题，使用ifarme方式兼容
+ * @param {String} title
+ * @return 
+ */
 const setTitle = function(title){
     document.title= title
     var mobile = navigator.userAgent.toLowerCase()
