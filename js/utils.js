@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2019-05-29 16:33:50
- * @LastEditTime 2020-07-17 17:15:14
+ * @LastEditTime 2021-02-07 17:44:54
  * @Description utils function
  */ 
 
@@ -367,5 +367,48 @@ const setTitle = function(title){
         }
         iframe.addEventListener('load', iframeCallback)
         document.body.appendChild(iframe)
+    }
+}
+
+/**
+ * @method fullScreen
+ * @description 全屏
+ * @param {*}
+ * @return {*}
+ */
+function fullScreen(){
+    let el = document.documentElement;
+    let rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+  
+    if (rfs) {
+      rfs.call(el);
+    }else if (typeof window.ActiveXObject !== "undefined") {
+      //for IE，这里其实就是模拟了按下键盘的F11，使浏览器全屏
+      let wscript = new ActiveXObject("WScript.Shell");
+      if (wscript != null) {
+        wscript.SendKeys("{F11}");
+      }
+    }
+}
+  
+/**
+ * @method exitScreen
+ * @description 退出全屏
+ * @param {*}
+ * @return {*}
+ */
+function exitScreen(){
+    let el = document;
+    let cfs = el.cancelFullScreen || el.webkitCancelFullScreen || el.mozCancelFullScreen || el.exitFullScreen;
+
+    if (cfs) {
+        cfs.call(el);
+    }
+    else if (typeof window.ActiveXObject !== "undefined") {
+        //for IE，这里和fullScreen相同，模拟按下F11键退出全屏
+        let wscript = new ActiveXObject("WScript.Shell");
+        if (wscript != null) {
+        wscript.SendKeys("{F11}");
+        }
     }
 }
