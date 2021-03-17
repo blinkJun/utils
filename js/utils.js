@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2019-05-29 16:33:50
- * @LastEditTime 2021-02-07 17:44:54
+ * @LastEditTime 2021-03-17 15:34:40
  * @Description utils function
  */ 
 
@@ -176,9 +176,10 @@ const pageScrollTop = {
  * @param {Number} to 滚动结束的地点
  * @param {Number} duration 运动时间
  * @param {Function} endCallback 滚动结束时的回调函数
+ * @param {String} direction 滚动的方向：scrollTop || scrollLeft
  * @return 
  */
-const scrollTop = function (el, from = 0, to, duration = 500, endCallback) {
+const elScroll = function (el, from = 0, to, duration = 500, endCallback, direction = 'scrollTop' ) {
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = (
             window.webkitRequestAnimationFrame ||
@@ -206,7 +207,7 @@ const scrollTop = function (el, from = 0, to, duration = 500, endCallback) {
         if (el === window) {
             window.scrollTo(d, d);
         } else {
-            el.scrollTop = d;
+            el[direction] = d;
         }
         window.requestAnimationFrame(() => scroll(d, end, step));
     }
