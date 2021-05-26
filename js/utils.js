@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2019-05-29 16:33:50
- * @LastEditTime 2021-03-17 15:34:40
+ * @LastEditTime 2021-05-26 18:02:13
  * @Description utils function
  */ 
 
@@ -313,40 +313,6 @@ const bubbleSort = function (arr) {
 // 3，这样保证逐渐遍历的过程中都是取到最小值
 
 
-// 浅拷贝与深拷贝：
-// 基本数据储存在栈中，引用类型数据储存在堆之中
-// 基本类型数据可直接复制，引用类型数据在赋值时，新变量没有获得新值，而是将指针指向此对象的堆位置
-// 浅拷贝：拷贝了对象的引用地址，没有获得新值；深拷贝：获得新值，而不是获得引用地址
-
-// 浅拷贝：let a = b;let a = Object.assign({},b)
-// 深拷贝：let a = JSON.parse(JSON.stringify(b));
-/**
- * @method deepCopy
- * @description 深拷贝
- * @param {Object} obj 需要拷贝的对象
- * @return {Object} 返回复制的对象
- */
-const deepCopy = function (obj) {
-    // 是否是数组
-    let newObj = Array.isArray(obj) ? [] : {};
-    // 不是对象 直接返回
-    if (typeof obj !== 'object' && obj !== null) {
-        return obj;
-    } else {
-        //   递归复制
-        for (var i in obj) {
-            if (typeof obj[i] === 'object') { //判断对象的这条属性是否为对象
-                newObj[i] = deepCopy(obj[i]);  //若是对象进行嵌套调用
-            } else {
-                newObj[i] = obj[i];
-            }
-        }
-    }
-    return newObj; //返回深度克隆后的对象
-}
-
-
-
 /**
  * @method setTitle
  * @description 在ios上会出现spa设置title不起效的问题，使用ifarme方式兼容
@@ -411,5 +377,38 @@ function exitScreen(){
         if (wscript != null) {
         wscript.SendKeys("{F11}");
         }
+    }
+}
+
+/**
+ * @method arrayUnique
+ * @description 数组去重
+ * @param {Array} arr
+ * @return {Array}
+ */
+const arrayUnique = {
+    base:function(arr){
+        const newArr = []
+        for(const item in arr){
+            if(!newArr.includes(item)){
+                newArr.push(item)
+            }
+        }
+        return newArr
+    },
+    bySet:function(arr){
+        return Array.from(new Set(arr))
+    },
+    byMap:function(arr){
+        const newArr = []
+        const map = new Map()
+        for(const value of arr){
+            if(!map.has(value)){
+                map.set(value,true)
+                newArr.push(value)
+            }
+        }
+        map.clear()
+        return newArr
     }
 }
