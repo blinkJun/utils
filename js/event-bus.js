@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2020-07-17 17:05:43
- * @LastEditTime 2020-07-17 17:10:03
+ * @LastEditTime 2021-05-26 15:37:45
  * @Description 发布与订阅
  */ 
 
@@ -32,7 +32,9 @@ class EventEmitter {
         this.listeners = new Map();
     }
     addListener(eventName, callback) {
-        this.listeners.has(eventName) || this.listeners.set(eventName, callback);
+        // 是否已有事件，没有进行重置为空数组
+        this.listeners.has(eventName) || this.listeners.set(eventName, []);
+        // 有则推进数组
         this.listeners.get(eventName).push(callback);
     }
     removeListener(eventName, callback) {
@@ -41,9 +43,9 @@ class EventEmitter {
             if (eventCallbackList && eventCallbackList.length) {
                 let eventCallbackListLength = eventCallbackList.length
                 for (let i = 0; i < eventCallbackListLength; i++) {
-                    if (typeof eventCallbackList[i] === 'function' && eventCallbackList[i] === callback) {
+                    // 每一项对比，回调函数一致的进行删除
+                    if (eventCallbackList[i] === callback) {
                         eventCallbackList.splice(i, 1);
-                        this.listeners.set(eventName, eventCallbackList);
                         return true;
                     }
                 }
@@ -67,3 +69,43 @@ class EventEmitter {
         }
     }
 }
+
+// exmple
+const bus = new EventEmitter()
+
+bus.addListener('timeout',(params)=>{
+    console.log(1)
+})
+bus.addListener('timeout',function two(params){
+    console.log(2)
+    bus.removeListener('timeout',two)
+})
+
+setInterval(()=>{
+    bus.emit('timeout',Date.now())
+},1000)
+
+
+
+// 浏览器内 可直接使用下列方式
+
+// 基础事件
+const timeoutEvent = new Event('timeout')
+addEventListener('timeout',function one(){
+    console.log('webkit timeout')
+})
+
+
+// 自定义事件 携带参数
+const paramsEvent = new CustomEvent('paramstimeout',{
+    detail:Date.now()
+})
+addEventListener('paramstimeout',function two(event){
+    console.log(event.detail)
+})
+
+// 触发
+setTimeout(()=>{
+    dispatchEvent(timeoutEvent)
+    dispatchEvent(paramsEvent)
+},1000)
