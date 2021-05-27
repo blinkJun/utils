@@ -5,11 +5,13 @@
 
 // 浅拷贝：let a = b;let a = Object.assign({},b)
 // 深拷贝：let a = JSON.parse(JSON.stringify(b));
-// 虑多种引用类型的完整深拷贝：
+// 考虑多种引用类型的完整深拷贝：
 
 // 常用的引用类型
 const objectType = '[object Object]'
 const arrayType = '[object Array]'
+const dateType = '[object Date]'
+const regType = '[object RegExp]'
 const setType = '[object Set]'
 const mapType = '[object Map]'
 
@@ -23,17 +25,6 @@ const getObjectType = function(obj){
     return Object.prototype.toString.call(obj)
 }
 
-// 创建一样的对象类型
-const createSameObject = function(obj,type){
-    if(type===arrayType){
-        return []
-    }
-    if(type===objectType){
-        return {}
-    }
-    return new obj.constructor(obj)
-}
-
 
 /**
  * @method deepCopy
@@ -42,45 +33,96 @@ const createSameObject = function(obj,type){
  * @return {Object} 返回复制的对象
  */
 const deepCopy = function(origin,map = new WeakMap()){
-    // 无数据或者类型为基本类型则直接返回
+    // 一、无数据 或者 类型为基本类型、函数则直接返回
     if(!origin||!isObject(origin)){
         return origin
     }
 
-    // 以下处理引用类型的复制
-    // 获取类型和新对象的基本结果
+    // 二、获取引用数据类型
     const type = getObjectType(origin)
-    const newObject = createSameObject(origin,type)
 
-    // 已经存在，则直接返回，循环引用
+    // 三、已经存在，则直接返回，循环引用
     if(map.has(origin)){
         return map.get(origin)
     }
 
-    map.set(newObject)
-
-    // 根据类型处理
-    // Set 类型
-    if(type===setType){
-        for(const value of origin){
-            return newObject.add(deepCopy(value,map));
-        }
+    // 四、根据类型处理
+    // 1，正则或者Date类型
+    if(type===regType||type===dateType){
+        const newObject = new obj.constructor(origin)
+        map.set(newObject)
         return newObject
     }
-    // Map类型
+    // 2，Set 类型
+    if(type===setType){
+        const newObject = new Set()
+        for(const value of origin){
+            newObject.add(deepCopy(value,map));
+        }
+        map.set(newObject)
+        return newObject
+    }
+    // 3，Map类型
     if(type===mapType){
+        const newObject = new Map()
         for(const [key,value] of origin){
             newObject.set(key,deepCopy(value,map))
         }
+        map.set(newObject)
         return newObject
     }
-    // Array 或者 Object 类型
-    if(type===arrayType||type===objectType){
-        for(const key in origin){
-            newObject[key] = deepCopy(origin[key],map)
-        }
-        return newObject
-    }
+    
+    // 4，Array 或者 Object 类型
+    // 考虑了以Symbol作为key的情况
+    const keys = Reflect.ownKeys(origin);
+    // 考虑了描述属性，获取描述符
+    const descriptors = Object.getOwnPropertyDescriptors(origin)
+    // 考虑原型链，继承原对象的原型，描述符
+    const newObject = Object.create(Object.getPrototypeOf(origin),descriptors)
+    
+    map.set(newObject)
+    keys.forEach(key=>{
+        const value = origin[key]
+        newObject[key] = deepCopy(value,map)
+    })
 
-    return newObject
+    // 数组类型则还原
+    return type===arrayType?Array.from(newObject):newObject
 }
+
+const obj = {
+    // =========== 1.基础数据类型 ===========
+    num: 0, // number
+    str: '', // string
+    bool: true, // boolean
+    unf: undefined, // undefined
+    nul: null, // null
+    sym: Symbol('sym'), // symbol
+    bign: BigInt(1n), // bigint
+
+    // =========== 2.Object类型 ===========
+    // 普通对象
+    obj: {
+        name: '我是一个对象',
+        id: 1
+    },
+    // 数组
+    arr: [0, 1, 2],
+    // 函数
+    func: function () {
+        console.log('我是一个函数')
+    },
+    // 日期
+    date: new Date(0),
+    // 正则
+    reg: new RegExp('/我是一个正则/ig'),
+    // Map
+    map: new Map().set('mapKey', 1),
+    // Set
+    set: new Set().add('set'),
+    // =========== 3.其他 ===========
+    [Symbol('1')]: 1  // Symbol作为key
+};
+
+console.log(obj)
+console.log(deepCopy(obj))
