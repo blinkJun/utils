@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2019-05-29 16:33:50
- * @LastEditTime 2021-05-26 18:02:13
+ * @LastEditTime 2021-05-28 10:54:28
  * @Description utils function
  */ 
 
@@ -311,6 +311,26 @@ const bubbleSort = function (arr) {
 // 1，首先遍历一次数组；
 // 2，到每一项时，再遍历一次剩余项，与当前项比较，不断取最小值替换到当前项
 // 3，这样保证逐渐遍历的过程中都是取到最小值
+
+/**
+ * @method selectionSort
+ * @description 选择排序
+ * @param {Array} arr 需要排序的数组
+ * @return {Array}
+ */
+const selectionSort = function(arr){
+    let length = arr.length;
+    for(let i = 0;i<length;i++){
+        let minIndex = i
+        for(let j=i+1;j<length;j++){
+            if(arr[j]<arr[minIndex]){
+                minIndex = j
+            }
+        }
+        [arr[minIndex],arr[i]] = [arr[i],arr[minIndex]]
+    }
+    return arr;
+}
 
 
 /**
