@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2019-05-29 16:33:50
- * @LastEditTime 2021-05-28 10:54:28
+ * @LastEditTime 2021-05-31 19:00:54
  * @Description utils function
  */ 
 
@@ -85,53 +85,44 @@ const updateUrlQuery = (options) => {
 }
 
 /**
- * @method Debounce
+ * @method debounce
  * @description 防抖函数
  * @param {Function} callback 回调方法
  * @param {Number} ms 防抖延迟
- * @return {Object} debounceFunc 防抖类，调用debounceFunc.exec()执行
+ * @return {Function} 
  */
-class Debounce {
-    constructor (callback, ms) {
-        this.timer = null
-        this.callback = callback
-        this.ms = ms
-    }
-
-    exec () {
-        clearTimeout(this.timer)
-        this.timer = setTimeout(this.callback, this.ms || 100)
-        return this.timer
-    }
+ const debounce = function(callback,ms=200){
+  let timer = null
+  return function(...args){
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+      callback.apply(this,args)
+    },ms)
+  }
 }
 
 /**
- * @method Throttle
+ * @method throttle
  * @description 节流函数
  * @param {Function} callback 回调方法
  * @param {Number} ms 节流间接时间
- * @return {Object} throttleFunc 节流类，调用throttleFunc.exec()执行
+ * @return {Function} 
  */
-class Throttle {
-    constructor (callback, ms) {
-        this.callback = callback
-        this.ms = ms
-        this.canRun = true
-    }
 
-    exec () {
-        if (!this.canRun) {
-            return false
-        } else {
-            this.canRun = false
-            this.callback()
-            return setTimeout(() => {
-                this.canRun = true
-            }, this.ms || 100)
-        }
+const throttle = function(callback,ms=200){
+  let canRun = true;
+  return function(...args){
+    if(!canRun){
+      return false
+    }else{
+      canRun = false
     }
+    setTimeout(()=>{
+      callback.apply(this,args)
+      canRun = true
+    },ms)
+  }
 }
-
 
 /**
  * @method pageScrollTop
