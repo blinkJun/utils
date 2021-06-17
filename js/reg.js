@@ -2,7 +2,7 @@
  * @Author liangjun
  * @LastEditors liangjun
  * @Date 2020-07-25 15:53:48
- * @LastEditTime 2020-07-25 15:55:38
+ * @LastEditTime 2021-06-17 17:57:12
  * @Description 正则
  */ 
 
@@ -108,3 +108,9 @@ console.log(cPattern.test("粤B39006"));
 var cnPattern = /[\u4E00-\u9FA5]/;
 //输出 true
 console.log(cnPattern.test("蔡宝坚"));
+
+
+// 模板匹配
+var templatePattern = /\${([^{}]*)}/g
+// 输出 true
+console.log(templatePattern.test("${213}"))

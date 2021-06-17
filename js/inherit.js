@@ -129,7 +129,7 @@ console.log(mouse instanceof Mouse); // true
 
 
 
-//  五，组合继承  构造和
+//  五，组合继承  原型链继承和构造继承
 // 核心：通过调用父类构造，继承父类的属性并保留传参的优点，然后通过将父类实例作为子类原型，实现函数复用
 function Tiger(name) {
     Animal.call(this);
