@@ -19,8 +19,7 @@ class Dep {
 
 // 观察对象属性
 const observe = function (obj){
-    // 只有一层对象
-    // 数组需要额外处理
+    // 数组、其他类型 需要额外处理
     Object.keys(obj).forEach((key)=>{
         let value = obj[key];
         let dep = new Dep();
@@ -34,6 +33,9 @@ const observe = function (obj){
                 dep.notify();
             }
         })
+        if(typeof value === 'object'){
+            observe(value)
+        }
     })
 }
 
