@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "target": "es2015",
+        "module": "es2015",
+        "lib": [
+            "dom",
+            "esnext"
+        ],
+        "baseUrl": "."
+    },
+    "include": [
+        "lib/**/*"
+    ],
+    "exclude": [
+        "docs",
+        "node_modules",
+        "static",
+        ".vscode",
+        ".npm",
+        ".yarn"
+    ]
+}

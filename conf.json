@@ -1,0 +1,30 @@
+{
+    "source": {
+        "include": ["lib/", "package.json", "README.md"],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs)"
+    },
+ 
+    "plugins": ["plugins/markdown"],
+ 
+    "opts": {
+        "encoding": "utf8",
+        "readme": "./README.md",
+        "destination": "docs/",
+        "recurse": true,
+        "verbose": true,
+        "template": "./node_modules/clean-jsdoc-theme",
+        "theme_opts": {
+            "homepageTitle": "blink 工具类函数文档",
+            "title": "<a href='./index.html'><img src='./static/logo.png' width='100' height='100' style='display:block;margin:0 auto;'></a>",
+            "static_dir": ["./static"],
+            "default_theme": "light",
+            "favicon":"./static/favicon.ico"
+        }
+    },
+ 
+    "markdown": {
+        "hardwrap": false,
+        "idInHeadings": true
+    }
+}
