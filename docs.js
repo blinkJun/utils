@@ -30,4 +30,6 @@ if (!fs.existsSync(targetDocsPath)) {
     fs.mkdirSync(targetDocsPath);
 }
 
+console.log("开始复制文档...");
 copy(docsPath, targetDocsPath);
+console.log("复制文档成功！");
