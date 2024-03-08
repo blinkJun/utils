@@ -1,6 +1,6 @@
 {
     "name": "@blinkjun/utils",
-    "version": "1.7.0",
+    "version": "1.7.1",
     "description": "blink common utils function",
     "main": "dist/bundle.js",
     "module": "dist/bundle.esm.js",
